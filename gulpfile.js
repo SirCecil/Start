@@ -17,7 +17,7 @@ let path = {
     css: source_folder + "/scss/style.scss",
     js: source_folder + "/js/script.js",
     img: source_folder + "/img/**/*.{jpg,png,svg,gif,ico,webp}",
-    fonts: source_folder + "/fonts/*.ttf",
+    fonts: source_folder + "/fonts/**/*.{ttf,eot,woff2,woff,svg}",
   },
   watch: {
     html: source_folder + "/**/*.html",
@@ -43,12 +43,7 @@ let { src, dest } = require('gulp'),
   webp = require('gulp-webp'),
   webphtml = require('gulp-webp-html'),
   webpcss = require("gulp-webpcss"),
-  svgSprite = require('gulp-svg-sprite'),
-  ttf2woff = require('gulp-ttf2woff'),
-  ttf2woff2 = require('gulp-ttf2woff2'),
-  ttf2svg = require('ttf2svg'),
-  ttf2eot = require('ttf2eot'),
-  fonter = require('gulp-fonter');
+  svgSprite = require('gulp-svg-sprite');
 
 function browserSync(params) {
   browsersync.init({
@@ -80,7 +75,7 @@ function css() {
     )
     .pipe(
       autoprefixer({
-        overrideBrowserslist: ["last 3 versions"],
+        overrideBrowserslist: ["last 5 versions"],
         cascade: true
       })
     )
@@ -111,12 +106,15 @@ function js() {
     .pipe(dest(path.build.js))
     .pipe(browsersync.stream())
 }
-
+function fonts() {
+  return src(path.src.fonts)
+        .pipe(dest(path.build.fonts))
+}
 function images() {
   return src(path.src.img)
     .pipe(
       webp({
-        quality: 70
+        quality: 85
       })
     )
     .pipe(dest(path.build.img))
@@ -158,9 +156,10 @@ function clean(params) {
   return del(path.clean);
 }
 
-let build = gulp.series(clean, gulp.parallel(js, css, html, images));
+let build = gulp.series(clean, gulp.parallel(js, css, html, images,fonts));
 let watch = gulp.parallel(build, watchFiles, browserSync);
 
+exports.fonts = fonts;
 exports.images = images;
 exports.js = js;
 exports.css = css;

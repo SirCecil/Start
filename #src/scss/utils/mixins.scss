@@ -39,10 +39,16 @@
     font-family: $font-family;
     font-weight: $weight;
     font-style: $style;
-    src: url("#{$file-path}.eot?#iefix") format("embedded-opentype"),
-    url("#{$file-path}.woff") format("woff"),
+    font-display: swap;
+    src:
     url("#{$file-path}.woff2") format("woff2"),
-    url("#{$file-path}.svg") format("svg"),
-    url("#{$file-path}.ttf") format("truetype");
+    url("#{$file-path}.woff") format("woff"),
   }
+}
+$maxWidth: 1200px;
+
+@mixin ad-fo($pcSize, $mobSize) {
+	$addSize: $pcSize - $mobSize;
+	$maxWidth: $maxWidth - 320;
+	font-size: calc(#{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth}));
 }
